@@ -1,0 +1,5 @@
+﻿NodeID,Node Name,Patients Per Hour
+1,Start,15
+2,Visit Doctor,10
+3,Eye Exam,1
+4,Go Home,10000

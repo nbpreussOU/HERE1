@@ -1,0 +1,5 @@
+﻿NodeTo,NodeFrom,Percentage,MaxCapacity
+2,1,100,10000
+4,2,50,5
+3,2,50,5
+4,3,100,1
