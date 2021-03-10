@@ -1,5 +1,5 @@
 import networkx as nx
-
+from pylab import *
 
 # helper function to load data in from file
 def get_data(filename):
@@ -101,3 +101,8 @@ wait4a = calc_avg_waittime(node4In, int(nodeData[3][2]), hour)
 print("The average case wait time for node 2 over the course of ", hour, " hours is: ", wait2a, " minutes")
 print("The average case wait time for node 3 over the course of ", hour, " hours is: ", wait3a, " minutes")
 print("The average case wait time for node 4 over the course of ", hour, " hours is: ", wait4a, " minutes")
+
+# drawing the graph
+nx.draw(G)
+# TODO make the graph look prettier
+show()
