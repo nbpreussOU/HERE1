@@ -54,10 +54,10 @@ for edge in edgeData:
     G.add_edge(int(edge[1]), int(edge[0]))
 
 # CHANGE THIS VARIABLE TO CHANGE STARTING FLOW
-startFlow = 10
+startFlow = 14
 
 # CHANGE THIS VARIABLE TO CHANGE WAITTIME CALCULATIONS
-hour = 8
+hour = 1
 
 # Calculate various network flows
 n1n2 = startFlow
@@ -102,7 +102,18 @@ print("The average case wait time for node 2 over the course of ", hour, " hours
 print("The average case wait time for node 3 over the course of ", hour, " hours is: ", wait3a, " minutes")
 print("The average case wait time for node 4 over the course of ", hour, " hours is: ", wait4a, " minutes")
 
-# drawing the graph
-nx.draw(G)
-# TODO make the graph look prettier
+# draw the graph
+pos = nx.spring_layout(G)
+nx.draw(G, pos)
+
+pos_attrs = {}
+for node, coords in pos.items():
+    pos_attrs[node] = (coords[0], coords[1] + .08)
+
+# add labels to the graph
+node_labels = nx.get_node_attributes(G,'name')
+nx.draw_networkx_labels(G, pos_attrs, node_labels)
+edge_labels = nx.get_edge_attributes(G,'capacity')
+nx.draw_networkx_edge_labels(G, pos_attrs, edge_labels)
+
 show()
