@@ -3,6 +3,7 @@ import networkx as nx
 from pylab import *
 
 
+# calculates the average case wait time at a given node, and returns the wait time of all patients at a given node
 def calc_avg_wait_time(flowin, patients) -> int:
     wait = 0
     z = int(flowin)
@@ -13,12 +14,14 @@ def calc_avg_wait_time(flowin, patients) -> int:
     return wait
 
 
+# calculates the maximum wait time of a single patient at a given node
 def calc_max_single_wait_time(flowin, patients) -> int:
     wait = max(0, (480 / patients - 480 / flowin) * flowin)
 
     return wait
 
 
+# determines if there is a long wait time at a node, and sends latecomers home
 def long_wait(flowin, patients) -> int:
     for k in range(int(flowin)):
         if max(0, (480 / patients - 480 / flowin) * k) > 30:
@@ -27,11 +30,11 @@ def long_wait(flowin, patients) -> int:
     return 0
 
 
-class HCNetwork:
+class HCNetworkV1:
     def __init__(self):
         # randomize variables via poisson process
         # toned down the variance in the patient arrival distribution
-        self.pStart = int(np.random.normal(50, 4))
+        self.pStart = np.random.poisson(50, 1)[0].item()
         self.pCheckIn = np.random.poisson(64, 1)[0].item()
         self.pNurse = np.random.poisson(192, 1)[0].item()
         self.pPCPEval = np.random.poisson(160, 1)[0].item()
@@ -165,8 +168,6 @@ class HCNetwork:
                 thickness.append(.01)
             else:
                 thickness.append(weight/20)
-
-        print(thickness)
 
         nx.draw(self.G, pos_h, width=thickness, edge_color=thickness, edge_vmin=0, edge_vmax=5, edge_cmap=plt.cm.get_cmap('PiYG'))
 
