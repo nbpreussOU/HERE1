@@ -16,7 +16,7 @@ for a in range(0, 100):
     v0_data.append(x.analyze_network())
     v0_mega_network.append(x.get_data())
 
-    #build network with topology changes
+    # build network with topology changes
     y = v1.HCNetworkV1()
     y.build_network()
     v1_data.append(y.analyze_network())
