@@ -17,6 +17,7 @@ for a in range(0, 100):
 df = pd.DataFrame(data, columns=['Flow In', 'Flow Out', 'Efficiency', 'Longest Wait', 'Total Wait'])
 df.to_csv(r'temp.csv', index=False)
 
+
 # create mega network
 df2 = pd.DataFrame(mega_network)
 total_network = df2.sum()
@@ -29,7 +30,6 @@ for i in range(len(percentage_network)):
 
 # build the network and visualize it
 percent = hcnetwork.HCNetwork()
-percent.set_data(percentage_network[0], percentage_network[1], percentage_network[2], percentage_network[3], percentage_network[4], percentage_network[5], percentage_network[6], percentage_network[7])
+percent.set_data(percentage_network[0], percentage_network[1], percentage_network[2], percentage_network[3], percentage_network[4], percentage_network[5], percentage_network[6], percentage_network[7], percentage_network[8])
 percent.build_network()
-print(percent.analyze_network())
 percent.visualize_network()

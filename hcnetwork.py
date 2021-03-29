@@ -19,10 +19,19 @@ def calc_max_single_wait_time(flowin, patients) -> int:
     return wait
 
 
+def long_wait(flowin, patients) -> int:
+    for k in range(int(flowin)):
+        if max(0, (480 / patients - 480 / flowin) * k) > 30:
+            return flowin - k
+
+    return 0
+
+
 class HCNetwork:
     def __init__(self):
         # randomize variables via poisson process
-        self.pStart = np.random.poisson(50, 1)[0].item()
+        # toned down the variance in the patient arrival distribution
+        self.pStart = int(np.random.normal(50, 4))
         self.pCheckIn = np.random.poisson(64, 1)[0].item()
         self.pNurse = np.random.poisson(192, 1)[0].item()
         self.pPCPEval = np.random.poisson(160, 1)[0].item()
@@ -43,7 +52,12 @@ class HCNetwork:
 
         self.nResidentnPCPEval = min(self.nNursenResident, self.pResident)
         self.nPCPEvalnCheckOut = min(self.nResidentnPCPEval, self.pPCPEval)
-        self.nPCPnCheckOut = min(self.nNursenPCP, self.pPCP)
+
+        # calculate if the walk-in patients have a long wait time
+        self.nPCPnEnd = long_wait(self.nNursenPCP, self.pPCP)
+        self.nPCPnCheckOut = min(self.nNursenPCP - self.nPCPnEnd, self.pPCP)
+
+
         self.nCheckOutnEnd = min(self.nPCPnCheckOut + self.nPCPEvalnCheckOut, self.pCheckOut)
 
         # initialize the graph
@@ -64,7 +78,7 @@ class HCNetwork:
         ])
 
         # create the edges
-        self.G.add_edges_from([(0, 1), (1, 2), (2, 4), (4, 6), (2, 5), (5, 3), (3, 6), (6, 7)])
+        self.G.add_edges_from([(0, 1), (1, 2), (2, 4), (4, 6), (2, 5), (5, 3), (3, 6), (6, 7), (4,7)])
 
         # add the capacity to the edges in patients per day
         self.G[0][1]['capacity'] = self.nStartnCheckIn
@@ -75,6 +89,7 @@ class HCNetwork:
         self.G[5][3]['capacity'] = self.nResidentnPCPEval
         self.G[3][6]['capacity'] = self.nPCPEvalnCheckOut
         self.G[6][7]['capacity'] = self.nCheckOutnEnd
+        self.G[4][7]['capacity'] = self.nPCPnEnd
 
         # add the wait time to the edges as weight
         self.G[0][1]['weight'] = calc_max_single_wait_time(self.nStartnCheckIn, self.pCheckIn)
@@ -85,6 +100,7 @@ class HCNetwork:
         self.G[5][3]['weight'] = calc_max_single_wait_time(self.nResidentnPCPEval, self.pPCPEval)
         self.G[3][6]['weight'] = calc_max_single_wait_time(self.nPCPnCheckOut + self.nPCPEvalnCheckOut, self.pCheckOut)
         self.G[6][7]['weight'] = 0
+        self.G[4][7]['weight'] = 0
 
     def analyze_network(self):
         # calculate maximum flow
@@ -112,29 +128,57 @@ class HCNetwork:
         return return_vals
 
     def visualize_network(self):
-        # draw the graph
-        pos = nx.spring_layout(self.G)
-        nx.draw(self.G, pos)
+        # define coordinates for the points
+        pos_h = {
+            0: [-1, 1],
+            1: [-.4, .8],
+            2: [.2, .6],
+            3: [1.5, .2],
+            4: [1, -.4],
+            5: [.8, .4],
+            6: [2.2, 0],
+            7: [2.8, -.2]
+        }
 
-        pos_attrs = {}
-        for node, coords in pos.items():
-            pos_attrs[node] = (coords[0], coords[1] + .08)
+        figure(figsize=(12, 4), dpi=80)
+
+        # raise the names for the nodes and edges above their respected points
+        pos_attrs_e = {}
+        for node, coords in pos_h.items():
+            pos_attrs_e[node] = (coords[0], coords[1] + .07)
+
+        pos_attrs_n = {}
+        for node, coords in pos_h.items():
+            pos_attrs_n[node] = (coords[0], coords[1] + .11)
 
         # add labels to the graph
         node_labels = nx.get_node_attributes(self.G, 'name')
-        nx.draw_networkx_labels(self.G, pos_attrs, node_labels)
+        nx.draw_networkx_labels(self.G, pos_attrs_n, node_labels)
         edge_labels = nx.get_edge_attributes(self.G, 'capacity')
-        nx.draw_networkx_edge_labels(self.G, pos_attrs, edge_labels)
+        nx.draw_networkx_edge_labels(self.G, pos_attrs_e, edge_labels)
+
+        # change the arrow's thickness depending on the capacity
+        thickness = []
+        for node1, node2 in nx.get_edge_attributes(self.G, 'capacity'):
+            weight = edge_labels[(node1, node2)]
+            if weight == 0:
+                thickness.append(.01)
+            else:
+                thickness.append(weight/20)
+
+        print(thickness)
+
+        nx.draw(self.G, pos_h, width=thickness, edge_color=thickness, edge_vmin=0, edge_vmax=5, edge_cmap=plt.cm.get_cmap('PiYG'))
 
         show()
 
     def get_data(self):
         # return edge data
         x = [self.nStartnCheckIn, self.nCheckInnNurse, self.nNursenPCP, self.nPCPnCheckOut, self.nNursenResident,
-             self.nResidentnPCPEval, self.nPCPEvalnCheckOut, self.nCheckOutnEnd]
+             self.nResidentnPCPEval, self.nPCPEvalnCheckOut, self.nCheckOutnEnd, self.nPCPnEnd]
         return x
 
-    def set_data(self, a, b, c, d, e, f, g, h):
+    def set_data(self, a, b, c, d, e, f, g, h, i):
         # create a network using any given edge data
         self.nStartnCheckIn = a
         self.nCheckInnNurse = b
@@ -144,3 +188,4 @@ class HCNetwork:
         self.nResidentnPCPEval = f
         self.nPCPEvalnCheckOut = g
         self.nCheckOutnEnd = h
+        self.nPCPnEnd = i
