@@ -5,7 +5,12 @@ class HCNetworkV1(VAMCv0.HCNetworkV0):
     def __init__(self):
         # use the parent method to initialize most of the variables
         super().__init__()
+        self.nPCPnEnd = 1
+        self.nPCPnCheckOut = 1
+        self.nCheckOutnEnd = 1
 
+    def initialize(self):
+        super().initialize()
         # update variables for new topology
         self.nPCPnEnd = VAMCv0.long_wait(self.nNursenPCP, self.pPCP)
         self.nPCPnCheckOut = min(self.nNursenPCP - self.nPCPnEnd, self.pPCP)
@@ -26,7 +31,7 @@ class HCNetworkV1(VAMCv0.HCNetworkV0):
         x.append(self.nPCPnEnd)
         return x
 
-    def set_data(self, a, b, c, d, e, f, g, h, i):
+    def set_data(self, data):
         # create a network using any given edge data
-        super().set_data(a, b, c, d, e, f, g, h)
-        self.nPCPnEnd = i
+        super().set_data(data)
+        self.nPCPnEnd = data[8]

@@ -31,8 +31,29 @@ def long_wait(flowin, patients) -> int:
 
 class HCNetworkV0:
     def __init__(self):
+        # all variables randomized at a later point in time, but the variables needed to be instantiated so...
+        self.pStart = 1
+        self.pCheckIn = 1
+        self.pNurse = 1
+        self.pPCPEval = 1
+        self.pPCP = 1
+        self.pResident = 1
+        self.pCheckOut = 1
+        self.multi = 1
+        self.nStartnCheckIn = 1
+        self.nCheckInnNurse = 1
+        self.nNursenBranch = 1
+        self.multi = 1
+        self.nNursenResident = 1
+        self.nNursenPCP = 1
+        self.nResidentnPCPEval = 1
+        self.nPCPEvalnCheckOut = 1
+        self.nPCPnCheckOut = 1
+        self.nCheckOutnEnd = 1
+        self.G = 1
+
+    def initialize(self):
         # randomize variables via poisson process
-        # toned down the variance in the patient arrival distribution
         self.pStart = np.random.poisson(50, 1)[0].item()
         self.pCheckIn = np.random.poisson(64, 1)[0].item()
         self.pNurse = np.random.poisson(192, 1)[0].item()
@@ -40,15 +61,14 @@ class HCNetworkV0:
         self.pPCP = np.random.poisson(16, 1)[0].item()
         self.pResident = np.random.poisson(40, 1)[0].item()
         self.pCheckOut = np.random.poisson(64, 1)[0].item()
-
-        self.multi = np.random.multinomial(100, [1/7.]*5 + [2/7.])
+        self.multi = np.random.multinomial(100, [1 / 7.] * 5 + [2 / 7.])
 
         # calculate capacity of the edges
         self.nStartnCheckIn = self.pStart
         self.nCheckInnNurse = min(self.nStartnCheckIn, self.pCheckIn)
         self.nNursenBranch = min(self.nCheckInnNurse, self.pNurse)
 
-        self.multi = np.random.multinomial(self.nNursenBranch, [76/100., 24/100.])
+        self.multi = np.random.multinomial(self.nNursenBranch, [76 / 100., 24 / 100.])
         self.nNursenResident = self.multi[0].item()
         self.nNursenPCP = self.multi[1].item()
 
@@ -56,8 +76,6 @@ class HCNetworkV0:
         self.nPCPEvalnCheckOut = min(self.nResidentnPCPEval, self.pPCPEval)
 
         self.nPCPnCheckOut = min(self.nNursenPCP, self.pPCP)
-
-
         self.nCheckOutnEnd = min(self.nPCPnCheckOut + self.nPCPEvalnCheckOut, self.pCheckOut)
 
         # initialize the graph
@@ -76,7 +94,6 @@ class HCNetworkV0:
         ])
 
     def build_network(self):
-
         # create the nodes
         self.G.add_nodes_from([
             (0, {"name": "start"}),
@@ -133,6 +150,12 @@ class HCNetworkV0:
         f = calc_avg_wait_time(self.nResidentnPCPEval, self.pPCPEval)
         total_wait = a + b + c + d + e + f
 
+        # round values to make them presentable
+        flow_value = round(flow_value, 3)
+        efficiency = round(efficiency, 3)
+        longest_wait = round(longest_wait, 3)
+        total_wait = round(total_wait)
+
         return_vals = [self.pStart, flow_value, efficiency, longest_wait, total_wait]
 
         return return_vals
@@ -186,13 +209,13 @@ class HCNetworkV0:
              self.nResidentnPCPEval, self.nPCPEvalnCheckOut, self.nCheckOutnEnd]
         return x
 
-    def set_data(self, a, b, c, d, e, f, g, h):
+    def set_data(self, data):
         # create a network using any given edge data
-        self.nStartnCheckIn = a
-        self.nCheckInnNurse = b
-        self.nNursenPCP = c
-        self.nPCPnCheckOut = d
-        self.nNursenResident = e
-        self.nResidentnPCPEval = f
-        self.nPCPEvalnCheckOut = g
-        self.nCheckOutnEnd = h
+        self.nStartnCheckIn = data[0]
+        self.nCheckInnNurse = data[1]
+        self.nNursenPCP = data[2]
+        self.nPCPnCheckOut = data[3]
+        self.nNursenResident = data[4]
+        self.nResidentnPCPEval = data[5]
+        self.nPCPEvalnCheckOut = data[6]
+        self.nCheckOutnEnd = data[7]
