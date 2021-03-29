@@ -5,9 +5,9 @@ from pylab import *
 
 def calc_avg_wait_time(flowin, patients) -> int:
     wait = 0
-    f = int(flowin)
+    z = int(flowin)
 
-    for j in range(f):
+    for j in range(z):
         wait = wait + max(0, (480 / patients - 480 / flowin) * j)
 
     return wait
@@ -127,3 +127,20 @@ class HCNetwork:
         nx.draw_networkx_edge_labels(self.G, pos_attrs, edge_labels)
 
         show()
+
+    def get_data(self):
+        # return edge data
+        x = [self.nStartnCheckIn, self.nCheckInnNurse, self.nNursenPCP, self.nPCPnCheckOut, self.nNursenResident,
+             self.nResidentnPCPEval, self.nPCPEvalnCheckOut, self.nCheckOutnEnd]
+        return x
+
+    def set_data(self, a, b, c, d, e, f, g, h):
+        # create a network using any given edge data
+        self.nStartnCheckIn = a
+        self.nCheckInnNurse = b
+        self.nNursenPCP = c
+        self.nPCPnCheckOut = d
+        self.nNursenResident = e
+        self.nResidentnPCPEval = f
+        self.nPCPEvalnCheckOut = g
+        self.nCheckOutnEnd = h
