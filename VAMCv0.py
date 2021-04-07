@@ -61,7 +61,6 @@ class HCNetworkV0:
         self.pPCP = np.random.poisson(16, 1)[0].item()
         self.pResident = np.random.poisson(40, 1)[0].item()
         self.pCheckOut = np.random.poisson(64, 1)[0].item()
-        self.multi = np.random.multinomial(100, [1 / 7.] * 5 + [2 / 7.])
 
         # calculate capacity of the edges
         self.nStartnCheckIn = self.pStart
@@ -80,18 +79,6 @@ class HCNetworkV0:
 
         # initialize the graph
         self.G = nx.DiGraph()
-
-        # create the nodes
-        self.G.add_nodes_from([
-            (0, {"name": "start"}),
-            (1, {"name": "Check In"}),
-            (2, {"name": "Nurse"}),
-            (3, {"name": "PCP Evaluation"}),
-            (4, {"name": "PCP"}),
-            (5, {"name": "Resident"}),
-            (6, {"name": "Check Out"}),
-            (7, {"name": "End"}),
-        ])
 
     def build_network(self):
         # create the nodes
