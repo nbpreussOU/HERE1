@@ -78,6 +78,7 @@ CLASS Base_Model:
 
 # Another Class
 
+```
 CLASS Modified_Model extends Base_Model
   
   public function Modified_Model()
@@ -95,4 +96,4 @@ CLASS Modified_Model extends Base_Model
     add new edges and nodes as in the base class
     
   you might need to modify other methods depending on the implementation, but it isn't strictly necessary
-      
+ ```     
