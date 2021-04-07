@@ -4,6 +4,21 @@ from pylab import *
 
 # calculates the average case wait time at a given node, and returns the wait time of all patients at a given node
 def calc_avg_wait_time(flowin, patients) -> int:
+    """Calculates wait time in the average case
+
+    Parameters
+    ----------
+
+    flow in : Int
+        The number of patients per time frame that flow in to a given node
+    patients : Int
+        The number of patients per time frame that a node can process
+
+    Returns
+    ----------
+    int
+        the total wait time experienced at a node in the average case
+    """
     wait = 0
     z = int(flowin)
 
@@ -15,6 +30,21 @@ def calc_avg_wait_time(flowin, patients) -> int:
 
 # calculates the maximum wait time of a single patient at a given node
 def calc_max_single_wait_time(flowin, patients) -> int:
+    """Calculates the maximum time a single patient will have to wait at the node
+
+    Parameters
+    ----------
+
+    flow in : Int
+        The number of patients per time frame that flow in to a given node
+    patients : Int
+        The number of patients per time frame that a node can process
+
+    Returns
+    ----------
+    int
+        the longest wait time experienced by a patient at a node
+    """
     wait = max(0, (480 / patients - 480 / flowin) * flowin)
 
     return wait
@@ -22,6 +52,21 @@ def calc_max_single_wait_time(flowin, patients) -> int:
 
 # determines if there is a long wait time at a node, and sends latecomers home
 def long_wait(flowin, patients) -> int:
+    """Removes patients from a node if the wait time exceeds a certain value
+
+    Parameters
+    ----------
+
+    flow in : Int
+        The number of patients per time frame that flow in to a given node
+    patients : Int
+        The number of patients per time frame that a node can process
+
+    Returns
+    ----------
+    int
+        the number of patients turned away by long wait time
+    """
     for k in range(int(flowin)):
         if max(0, (480 / patients - 480 / flowin) * k) > 30:
             return flowin - k
@@ -30,7 +75,30 @@ def long_wait(flowin, patients) -> int:
 
 
 class HCNetworkV0:
+    """
+    A class that houses a healthcare network flow model
+
+    Uses networkx to build the network model, and pylab
+    from matplotlib to draw it
+
+    Methods
+    -------
+
+    initialize()
+        Assigns nodes their random values and calculates the edge's capacity
+    build_network():
+        Creates the network as a networkx graph
+    analyze_network(): List
+        Calculates the metrics used to evaluate the network and returns them as a list
+    visualize_network():
+        Modifies attributes of the network and then displays the network
+    get_data(): List
+        returns a list of all the edge capacities
+    set_data(data):
+        sets the edge capacities to values contined in the list data
+    """
     def __init__(self):
+        """Initializes all variables used in the model, but does not set them to a relevant value"""
         # all variables randomized at a later point in time, but the variables needed to be instantiated so...
         self.pStart = 1
         self.pCheckIn = 1
@@ -53,6 +121,7 @@ class HCNetworkV0:
         self.G = 1
 
     def initialize(self):
+        """Randomizes values for the nodes and calculates edge capacity"""
         # randomize variables via poisson process
         self.pStart = np.random.poisson(50, 1)[0].item()
         self.pCheckIn = np.random.poisson(64, 1)[0].item()
@@ -81,6 +150,7 @@ class HCNetworkV0:
         self.G = nx.DiGraph()
 
     def build_network(self):
+        """Creates the network in networkx and assigns capacities and weights to the edges of the graph"""
         # create the nodes
         self.G.add_nodes_from([
             (0, {"name": "start"}),
@@ -117,6 +187,13 @@ class HCNetworkV0:
         self.G[6][7]['weight'] = 0
 
     def analyze_network(self):
+        """Analyzes the networks according to various metrics
+
+        Returns
+        ----------
+        list
+            a list contianing the flow in, flow out, efficiency, the longest wait time, and the total wait time
+        """
         # calculate maximum flow
         flow_value, flow_dict = nx.maximum_flow(self.G, 0, 7)
 
@@ -148,6 +225,7 @@ class HCNetworkV0:
         return return_vals
 
     def visualize_network(self):
+        """Modifies attributes of the graph and then visualize the graph"""
         # define coordinates for the points
         pos_h = {
             0: [-1, 1],
@@ -191,12 +269,26 @@ class HCNetworkV0:
         show()
 
     def get_data(self):
+        """Returns the capacities of the edges of the graph
+
+        Returns
+        ----------
+        list
+            list of the capacities in the edges of the graphs
+        """
         # return edge data
         x = [self.nStartnCheckIn, self.nCheckInnNurse, self.nNursenPCP, self.nPCPnCheckOut, self.nNursenResident,
              self.nResidentnPCPEval, self.nPCPEvalnCheckOut, self.nCheckOutnEnd]
         return x
 
     def set_data(self, data):
+        """Assigns the capacities in a list of data to the edges of the graph
+
+        Parameters
+        ----------
+        data:list
+            list of the capacities in the edges of the graphs
+        """
         # create a network using any given edge data
         self.nStartnCheckIn = data[0]
         self.nCheckInnNurse = data[1]
