@@ -44,6 +44,7 @@ def analyze_model(filename, name):
     print(filename, "mean", analysis)
     print(filename, "sd", df.std(axis=0))
     print(filename, "max", df.max(axis=0))
+    print(filename, "min", df.min(axis=0))
 
 
 # analyze the model and output it to a given csv file
