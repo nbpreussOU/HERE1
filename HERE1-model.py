@@ -3,6 +3,7 @@ import VAMCv1 as v1
 import VAMCv2 as v2
 import VAMCv3 as v3
 import pandas as pd
+import random
 
 
 def analyze_model(filename, name):
@@ -47,11 +48,13 @@ def analyze_model(filename, name):
     print(filename, "max", df.max(axis=0))
     print(filename, "min", df.min(axis=0))
 
+#
+random.seed(13)
 
 # analyze the model and output it to a given csv file
-analyze_model("v0_data.csv", v0.HCNetworkV0())
-analyze_model("v1_data.csv", v1.HCNetworkV1())
-analyze_model("v2_data.csv", v2.HCNetworkV2())
+analyze_model("Data/v0_data.csv", v0.HCNetworkV0())
+analyze_model("Data/v1_data.csv", v1.HCNetworkV1())
+analyze_model("Data/v2_data.csv", v2.HCNetworkV2())
 
 # super secret calculations looking at the effect of standard deviation on the metrics
 mean_data = []
@@ -77,7 +80,7 @@ for i in range(0, 50):
 
 # create a dataframe from the values we got and write it out to a csv
 df_mean = pd.DataFrame(mean_data, columns=['Standard Deviation', 'Flow In', 'Flow Out', 'Efficiency', 'Longest Wait', 'Total Wait'])
-df_mean.to_csv("v3_mean_data.csv", index=False)
+df_mean.to_csv("Data/v3_mean_data.csv", index=False)
 
 df_max = pd.DataFrame(max_data, columns=['Standard Deviation', 'Flow In', 'Flow Out', 'Efficiency', 'Longest Wait', 'Total Wait'])
-df_max.to_csv("v3_max_data.csv", index=False)
+df_max.to_csv("Data/v3_max_data.csv", index=False)

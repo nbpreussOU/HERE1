@@ -3,8 +3,8 @@
 # Created by: Nathan
 # Created on: 4/8/2021
 
-df.max <- read.csv("v3_max_data.csv")
-df.mean <- read.csv("v3_mean_data.csv")
+df.max <- read.csv("Data/v3_max_data.csv")
+df.mean <- read.csv("Data/v3_mean_data.csv")
 df.max$Model <- "Max"
 df.mean$Model <- "Mean"
 df <- rbind(df.max, df.mean)
@@ -30,11 +30,12 @@ summary(lm.totalwait.mean.log)
 library(ggplot2)
 # linear best fit
 ggplot(data = df, aes(Standard.Deviation, Efficiency, fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) + geom_point(pch=21) + ggtitle("Efficiency")
-
+ggsave("Images/lmEfficiency.png")
 # exponential best fit
 ggplot(data = df, aes(Standard.Deviation, log(Longest.Wait), fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) + geom_point(pch=21) + ggtitle("Log SP Wait")
+ggsave("Images/LogLongestWait.png")
 ggplot(data = df, aes(Standard.Deviation, log(Total.Wait), fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) + geom_point(pch=21) + ggtitle("Log Total Wait")
-
+ggsave("Images/LogTotalWait.png")
 # glad to see that wait time increases exponentially as the standard deviation of the variables increases
 # SD of 10 should mimic the base model
 
