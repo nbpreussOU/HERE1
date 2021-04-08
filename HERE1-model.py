@@ -48,8 +48,9 @@ def analyze_model(filename, name):
     print(filename, "max", df.max(axis=0))
     print(filename, "min", df.min(axis=0))
 
-#
-random.seed(13)
+
+# setting seeds
+random.seed(16)
 
 # analyze the model and output it to a given csv file
 analyze_model("Data/v0_data.csv", v0.HCNetworkV0())
