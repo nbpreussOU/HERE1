@@ -19,6 +19,12 @@ def calc_avg_wait_time(flowin, patients) -> int:
     int
         the total wait time experienced at a node in the average case
     """
+    if patients <= 0:
+        patients = 1
+
+    if flowin <= 0:
+        flowin = 1
+
     wait = 0
     z = int(flowin)
 
@@ -45,6 +51,12 @@ def calc_max_single_wait_time(flowin, patients) -> int:
     int
         the longest wait time experienced by a patient at a node
     """
+    if patients <= 0:
+        patients = 1
+
+    if flowin <= 0:
+        flowin = 1
+
     wait = max(0, (480 / patients - 480 / flowin) * flowin)
 
     return wait
@@ -67,6 +79,12 @@ def long_wait(flowin, patients) -> int:
     int
         the number of patients turned away by long wait time
     """
+    if patients <= 0:
+        patients = 1
+
+    if flowin <= 0:
+        flowin = 1
+
     for k in range(int(flowin)):
         if max(0, (480 / patients - 480 / flowin) * k) > 30:
             return flowin - k
