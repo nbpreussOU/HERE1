@@ -11,7 +11,7 @@ Mean.Total.Wait.Time <- c(1142, 1021, 968)
 Max.Total.Wait.Time <- c(12573, 7018, 5826)
 SD.Efficiency <- c(8.7, 7.4, 7.0)
 SD.Single.Person.Wait.Time <- c(94, 89, 76)
-SD.Total.Wait.Time <- (1733, 1464, 1146)
+SD.Total.Wait.Time <- c(1733, 1464, 1146)
 
 # fix the mean data frame
 df.mean <- data.frame(Mean.Efficiency, Mean.Single.Person.Wait.Time, Mean.Total.Wait.Time)
@@ -35,32 +35,32 @@ colnames(dfm.sd) <- c("Metric", "Model", "Value")
 dfm.sd$Model <- recode_factor(dfm.sd$Model, "1" = "Original", "2" = "Send Home", "3" = "Distribution")
 
 #plot graphs
-ggplot(subset(dfm.mean, Metric %in% c("Mean.Efficiency")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") + 
+ggplot(subset(dfm.mean, Metric %in% "Mean.Efficiency"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Percent", fill = "Model", title = "Mean Efficiency")
 ggsave("Images/MeanEfficiency.png")
-ggplot(subset(dfm.mean, Metric %in% c("Mean.Single.Person.Wait.Time")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
+ggplot(subset(dfm.mean, Metric %in% "Mean.Single.Person.Wait.Time"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Minutes", fill = "Model", title = "Mean Single Person Wait Time")
 ggsave("Images/Meanspwait.png")
-ggplot(subset(dfm.mean, Metric %in% c("Mean.Total.Wait.Time")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") + 
+ggplot(subset(dfm.mean, Metric %in% "Mean.Total.Wait.Time"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Minutes", fill = "Model", title = "Mean Total Wait Time")
 ggsave("Images/MeanWait.png")
-ggplot(subset(dfm.max, Metric %in% c("Min.Efficiency")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") + 
+ggplot(subset(dfm.max, Metric %in% "Min.Efficiency"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Percent", fill = "Model", title = "Min Efficiency")
 ggsave("Images/MinEfficiency.png")
-ggplot(subset(dfm.max, Metric %in% c("Max.Single.Person.Wait.Time")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") + 
+ggplot(subset(dfm.max, Metric %in% "Max.Single.Person.Wait.Time"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Minutes", fill = "Model", title = "Max Single Person Wait Time")
 ggsave("Images/Maxspwait.png")
-ggplot(subset(dfm.max, Metric %in% c("Max.Total.Wait.Time")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") + 
+ggplot(subset(dfm.max, Metric %in% "Max.Total.Wait.Time"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Minutes", fill = "Model", title = "Max Total Wait Time")
 ggsave("Images/MaxWait.png")
 
-ggplot(subset(dfm.sd, Metric %in% c("Min.Efficiency")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
+ggplot(subset(dfm.sd, Metric %in% "Min.Efficiency"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Percent", fill = "Model", title = "Standard Deviation Efficiency")
 ggsave("Images/SDEfficiency.png")
-ggplot(subset(dfm.max, Metric %in% c("Max.Single.Person.Wait.Time")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
+ggplot(subset(dfm.max, Metric %in% "Max.Single.Person.Wait.Time"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Minutes", fill = "Model", title = "Standard Deviation Single Person Wait Time")
 ggsave("Images/SDspwait.png")
-ggplot(subset(dfm.max, Metric %in% c("Max.Total.Wait.Time")), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
+ggplot(subset(dfm.max, Metric %in% "Max.Total.Wait.Time"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Minutes", fill = "Model", title = "Standard Deviation Total Wait Time")
 ggsave("Images/SDWait.png")
 
