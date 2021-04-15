@@ -242,7 +242,7 @@ class HCNetworkV0:
 
         return return_vals
 
-    def visualize_network(self):
+    def visualize_network(self, filename):
         """Modifies attributes of the graph and then visualize the graph"""
         # define coordinates for the points
         pos_h = {
@@ -284,7 +284,11 @@ class HCNetworkV0:
 
         nx.draw(self.G, pos_h, width=thickness, edge_color=thickness, edge_vmin=0, edge_vmax=5, edge_cmap=plt.cm.get_cmap('PiYG'))
 
+        # grab images
+        name = "Images/" + filename + ".png"
+        savefig(name)
         show()
+
 
     def get_data(self):
         """Returns the capacities of the edges of the graph
