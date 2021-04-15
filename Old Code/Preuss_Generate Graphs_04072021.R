@@ -37,7 +37,7 @@ dfm.sd$Model <- recode_factor(dfm.sd$Model, "1" = "Original", "2" = "Send Home",
 #plot graphs
 ggplot(subset(dfm.mean, Metric %in% "Mean.Efficiency"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Percent", fill = "Model", title = "Mean Efficiency")
-ggsave("Images/MeanEfficiency.png")
+ggsave("../Images/MeanEfficiency.png")
 ggplot(subset(dfm.mean, Metric %in% "Mean.Single.Person.Wait.Time"), aes(x=Metric, y=Value, fill=Model)) + geom_bar(stat="identity", position="dodge") +
   labs(x = "", y = "Minutes", fill = "Model", title = "Mean Single Person Wait Time")
 ggsave("Images/Meanspwait.png")

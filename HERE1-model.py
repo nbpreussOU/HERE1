@@ -4,6 +4,7 @@ import VAMCv3 as v3
 import pandas as pd
 import numpy as np
 import random
+from scipy import stats
 
 
 def analyze_model(filename, name):
@@ -23,6 +24,11 @@ def analyze_model(filename, name):
 
     # create a dataframe from the values we got and write it out to a csv
     df = pd.DataFrame(data, columns=['Flow In', 'Flow Out', 'Efficiency', 'Longest Wait', 'Total Wait'])
+
+    # remove outliers
+    df = df[(np.abs(stats.zscore(df)) < 3).all(axis=1)]
+
+    # output data to csv
     df.to_csv("Data/" + filename + ".csv", index=False)
 
     # create mega network for topology version
@@ -47,7 +53,7 @@ def analyze_model(filename, name):
     # gather relevant data and store it in a csv
     j = list(df.max(axis=0))
     k = list(df.min(axis=0))
-    j[3] = k[3]
+    j[2] = k[2]
     i = ["Flow In", "Flow Out", "Efficiency", "Longest Wait", "Total Wait"]
     out_data = pd.DataFrame(np.column_stack([i, analysis, j]), columns=['Metric', 'Mean', 'Extreme'])
     out_data.to_csv("Data/" + filename + "_metrics.csv", index=False)
@@ -71,9 +77,10 @@ def distribution():
 
         # gather relevant data and store it in a csv
         df3 = pd.DataFrame(data)
+
         j = list(df3.max(axis=0))
         k = list(df3.min(axis=0))
-        j[2] = k[2]
+        j[3] = k[3]
         mean_data.append(list(df3.mean(axis=0)))
         max_data.append(j)
 
@@ -87,9 +94,6 @@ def distribution():
                                              'Total Wait'])
     df_max.to_csv("Data/v3_max_data.csv", index=False)
 
-
-# setting seeds
-random.seed(16)
 
 # analyze the model and output it to a given csv file
 analyze_model("Original Model", v0.HCNetworkV0())
