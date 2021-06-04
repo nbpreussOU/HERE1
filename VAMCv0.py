@@ -28,6 +28,7 @@ def calc_avg_wait_time(flowin, patients) -> int:
     wait = 0
     z = int(flowin)
 
+    # range(z) gives integers of 0, 1, 2, ... , z-2, z-1
     for j in range(z):
         wait = wait + max(0, (480 / patients - 480 / flowin) * j)
 
@@ -57,7 +58,7 @@ def calc_max_single_wait_time(flowin, patients) -> int:
     if flowin <= 0:
         flowin = 1
 
-    wait = max(0, (480 / patients - 480 / flowin) * flowin)
+    wait = max(0, (480 / patients - 480 / flowin) * (flowin - 1))
 
     return wait
 
@@ -171,7 +172,7 @@ class HCNetworkV0:
         """Creates the network in networkx and assigns capacities and weights to the edges of the graph"""
         # create the nodes
         self.G.add_nodes_from([
-            (0, {"name": "start"}),
+            (0, {"name": "Start"}),
             (1, {"name": "Check In"}),
             (2, {"name": "Nurse"}),
             (3, {"name": "PCP Evaluation"}),
@@ -256,20 +257,23 @@ class HCNetworkV0:
             7: [2.8, -.2]
         }
 
-        figure(figsize=(12, 4), dpi=80)
+        figure(figsize=(14, 4), dpi=80)
+
+        plt.xlim(-1.5, 3.3)
+        plt.ylim(-.5, 1.2)
 
         # raise the names for the nodes and edges above their respected points
         pos_attrs_e = {}
         for node, coords in pos_h.items():
-            pos_attrs_e[node] = (coords[0], coords[1] + .07)
+            pos_attrs_e[node] = (coords[0], coords[1] - .08)
 
         pos_attrs_n = {}
         for node, coords in pos_h.items():
-            pos_attrs_n[node] = (coords[0], coords[1] + .11)
+            pos_attrs_n[node] = (coords[0], coords[1] + .13)
 
         # add labels to the graph
         node_labels = nx.get_node_attributes(self.G, 'name')
-        nx.draw_networkx_labels(self.G, pos_attrs_n, node_labels)
+        nx.draw_networkx_labels(self.G, pos_attrs_n, node_labels, font_size=14)
         edge_labels = nx.get_edge_attributes(self.G, 'capacity')
         nx.draw_networkx_edge_labels(self.G, pos_attrs_e, edge_labels)
 
@@ -288,7 +292,6 @@ class HCNetworkV0:
         name = "Images/" + filename + ".png"
         savefig(name)
         show()
-
 
     def get_data(self):
         """Returns the capacities of the edges of the graph

@@ -1,6 +1,6 @@
 Metric,Mean,Extreme
-Flow In,48.336,69.0
-Flow Out,45.692,63.0
-Efficiency,92.21146600000002,70.213
-Longest Wait,48.420248,360.0
-Total Wait,889.856,5893.0
+Flow In,47.31,67.0
+Flow Out,45.062,62.0
+Efficiency,92.320902,72.881
+Longest Wait,48.809543999999995,298.667
+Total Wait,823.974,5760.0
