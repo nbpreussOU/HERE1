@@ -279,14 +279,13 @@ class HCNetworkV0:
 
         # change the arrow's thickness depending on the capacity
         thickness = []
+        color = []
         for node1, node2 in nx.get_edge_attributes(self.G, 'capacity'):
             weight = edge_labels[(node1, node2)]
-            if weight == 0:
-                thickness.append(.01)
-            else:
-                thickness.append(weight/20)
+            thickness.append(3.2)
+            color.append(weight/20)
 
-        nx.draw(self.G, pos_h, width=thickness, edge_color=thickness, edge_vmin=0, edge_vmax=5, edge_cmap=plt.cm.get_cmap('PiYG'))
+        nx.draw(self.G, pos_h, width=thickness, edge_color=color, edge_vmin=0, edge_vmax=2, edge_cmap=plt.cm.get_cmap('PiYG'))
 
         # grab images
         name = "Images/" + filename + ".png"

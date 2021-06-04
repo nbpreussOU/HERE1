@@ -9,43 +9,40 @@ from scipy import stats
 
 def analyze_model(filename, name):
     # create a list to store all our values
-    data = []
-    mega_network = []
-    x = name
+    metrics = []
+    edges = []
     runs = 500
 
     # create n different networks and store the results
-    for a in range(0, runs):
+    for a in range(runs):
         # build network
-        x.initialize()
-        x.build_network()
-        data.append(x.analyze_network())
-        mega_network.append(x.get_data())
+        name.initialize()
+        name.build_network()
+        metrics.append(name.analyze_network())
+        edges.append(name.get_data())
+
+
 
     # create a dataframe from the values we got and write it out to a csv
-    df = pd.DataFrame(data, columns=['Flow In', 'Flow Out', 'Efficiency', 'Longest Wait', 'Total Wait'])
+    df = pd.DataFrame(metrics, columns=['Flow In', 'Flow Out', 'Efficiency', 'Longest Wait', 'Total Wait'])
+    df2 = pd.DataFrame(edges)
+    df3 = pd.DataFrame(pd.concat([df,df2],axis=1))
 
     # remove outliers
-    df = df[(np.abs(stats.zscore(df)) < 3).all(axis=1)]
+    df3 = df3[(np.abs(stats.zscore(df3[2])) < 3)]
+    print(len(df3.index))
 
     # output data to csv
     df.to_csv("Data/" + filename + ".csv", index=False)
 
     # create mega network for topology version
-    df2 = pd.DataFrame(mega_network)
-    total_network = df2.sum()
+    total_network = df2.sum() / len(df2.index)
     percentage_network = [float(i) for i in total_network]
 
-    # round data
-    flow_in = percentage_network[0]
-    for i in range(len(percentage_network)):
-        percentage_network[i] = round(percentage_network[i] / flow_in * 100, 2)
-
     # build the network and visualize it
-    percent = name
-    percent.set_data(percentage_network)
-    percent.build_network()
-    percent.visualize_network(filename)
+    name.set_data(percentage_network)
+    name.build_network()
+    name.visualize_network(filename)
 
     # print out summary data for analysis
     analysis = [i/runs for i in df.sum()]
