@@ -3,15 +3,13 @@ import VAMCv1 as v1
 import VAMCv3 as v3
 import pandas as pd
 import numpy as np
-import random
 from scipy import stats
 
 
-def analyze_model(filename, name):
+def analyze_model(filename, name, runs):
     # create a list to store all our values
     metrics = []
     edges = []
-    runs = 500
 
     # create n different networks and store the results
     for a in range(runs):
@@ -21,46 +19,46 @@ def analyze_model(filename, name):
         metrics.append(name.analyze_network())
         edges.append(name.get_data())
 
-
-
     # create a dataframe from the values we got and write it out to a csv
     df = pd.DataFrame(metrics, columns=['Flow In', 'Flow Out', 'Efficiency', 'Longest Wait', 'Total Wait'])
     df2 = pd.DataFrame(edges)
-    df3 = pd.DataFrame(pd.concat([df,df2],axis=1))
+    df3 = pd.DataFrame(pd.concat([df, df2], axis=1))
 
     # remove outliers
-    df3 = df3[(np.abs(stats.zscore(df3[2])) < 3)]
-    print(len(df3.index))
+    df3 = df3[(np.abs(stats.zscore(df3["Flow In"])) < 3)]
+    df3 = df3[(np.abs(stats.zscore(df3["Flow Out"])) < 3)]
+    df3 = df3[(np.abs(stats.zscore(df3["Efficiency"])) < 3)]
+    df3 = df3[(np.abs(stats.zscore(df3["Longest Wait"])) < 3)]
+    df3 = df3[(np.abs(stats.zscore(df3["Total Wait"])) < 3)]
 
     # output data to csv
-    df.to_csv("Data/" + filename + ".csv", index=False)
+    df3.to_csv("Data/" + filename + ".csv", index=False)
 
     # create mega network for topology version
-    total_network = df2.sum() / len(df2.index)
-    percentage_network = [float(i) for i in total_network]
+    total_network = df3.sum() / len(df3.index)
+    percentage_network = [round(float(i), 3) for i in total_network]
 
     # build the network and visualize it
-    name.set_data(percentage_network)
+    name.set_data(percentage_network[5:])
     name.build_network()
     name.visualize_network(filename)
 
     # print out summary data for analysis
-    analysis = [i/runs for i in df.sum()]
+    analysis = [round(i/len(df3.index), 3) for i in df3.sum()]
 
-    # gather relevant data and store it in a csv
-    j = list(df.max(axis=0))
-    k = list(df.min(axis=0))
+    # gather relevant metrics and store it in a csv
+    j = list(df3.max(axis=0))
+    k = list(df3.min(axis=0))
     j[2] = k[2]
     i = ["Flow In", "Flow Out", "Efficiency", "Longest Wait", "Total Wait"]
-    out_data = pd.DataFrame(np.column_stack([i, analysis, j]), columns=['Metric', 'Mean', 'Extreme'])
+    out_data = pd.DataFrame(np.column_stack([i, analysis[0:5], j[0:5]]), columns=['Metric', 'Mean', 'Extreme'])
     out_data.to_csv("Data/" + filename + "_metrics.csv", index=False)
 
 
-def distribution():
+def distribution(runs):
     # super secret calculations looking at the effect of standard deviation on the metrics
     mean_data = []
     max_data = []
-    runs = 500
 
     # do the runs over a range of standard deviations
     for i in range(0, 50):
@@ -93,6 +91,7 @@ def distribution():
 
 
 # analyze the model and output it to a given csv file
-analyze_model("Original Model", v0.HCNetworkV0())
-analyze_model("Send Home", v1.HCNetworkV1())
-distribution()
+num_rums = 500
+analyze_model("Original Model", v0.HCNetworkV0(), num_rums)
+analyze_model("Send Home", v1.HCNetworkV1(), num_rums)
+distribution(num_rums)
