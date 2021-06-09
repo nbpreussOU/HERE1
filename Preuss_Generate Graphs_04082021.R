@@ -17,45 +17,44 @@ df <- rbind(df.max, df.mean)
 ggplot(df.0, aes(x=Efficiency, fill = ..x..)) + geom_histogram(binwidth = 1) + scale_fill_gradient(low = "red", high = "blue") +
   labs(x = "Percent", y = "Count") + theme(legend.position = "none", text = element_text(size=20))
 ggsave("Images/EfficiencyBase.png")
-ggplot(df.0, aes(x=Longest.Wait, fill = ..x..)) + geom_histogram(binwidth = 8) + scale_fill_gradient(low = "red", high = "blue") +
-  labs(x = "Minutes", y = "Count") + theme(legend.position = "none", text = element_text(size=20))
-ggsave("Images/SPWaitBase.png")
-ggplot(df.0, aes(x=Total.Wait, fill = ..x..)) + geom_histogram(binwidth = 100) + scale_fill_gradient(low = "red", high = "blue") +
-  labs(x = "Minutes", y = "Count") + theme(legend.position = "none", text = element_text(size=20))
-ggsave("Images/LongWaitBase.png")
 
 ggplot(df.1, aes(x=Efficiency, fill = ..x..)) + geom_histogram(binwidth = 1) + scale_fill_gradient(low = "red", high = "blue") +
   labs(x = "Percent", y = "Count") + theme(legend.position = "none", text = element_text(size=20))
 ggsave("Images/EfficiencySH.png")
-ggplot(df.1, aes(x=Longest.Wait, fill = ..x..)) + geom_histogram(binwidth = 8) + scale_fill_gradient(low = "red", high = "blue") +
-  labs(x = "Minutes", y = "Count") + theme(legend.position = "none", text = element_text(size=20))
-ggsave("Images/SPWaitSH.png")
-ggplot(df.1, aes(x=Total.Wait, fill = ..x..)) + geom_histogram(binwidth = 100) + scale_fill_gradient(low = "red", high = "blue") +
-  labs(x = "Minutes", y = "Count") + theme(legend.position = "none", text = element_text(size=20))
-ggsave("Images/LongWaitSH.png")
 
-# linear methods, some good, some not so good
-#lm.efficiency.mean <- lm(df.mean$Efficiency ~ df.mean$Standard.Deviation)
-#lm.efficiency.max <- lm(df.max$Efficiency ~ df.max$Standard.Deviation)
+# make correlation graphs
+ggplot(df.0, aes(x=Longest.Wait, y=Total.Wait, color="blue")) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  labs(x = "Longest Wait", y = "Total Wait") + theme(legend.position = "none", text = element_text(size=20))
+ggsave("Images/LWTWBase.png")
 
-# exponential graphs
-#lm.spwait.max.log <- lm(log(df.max$Longest.Wait) ~ df.max$Standard.Deviation)
-#lm.totalwait.max.log <- lm(log(df.max$Total.Wait) ~ df.max$Standard.Deviation)
-#lm.spwait.mean.log <- lm(log(df.mean$Longest.Wait) ~ df.mean$Standard.Deviation)
-#lm.totalwait.mean.log <- lm(log(df.mean$Total.Wait) ~ df.mean$Standard.Deviation)
+ggplot(df.0, aes(x=Longest.Wait, y=Efficiency)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  labs(x = "Longest Wait") + theme(legend.position = "none", text = element_text(size=20))
+ggsave("Images/LWEBase.png")
 
-#summary(lm.efficiency.mean)
-#summary(lm.efficiency.max)
-#summary(lm.spwait.max.log)
-#summary(lm.totalwait.max.log)
-#summary(lm.spwait.mean.log)
-#summary(lm.totalwait.mean.log)
+ggplot(df.0, aes(x=Total.Wait, y=Efficiency)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  labs(x = "Total Wait") + theme(legend.position = "none", text = element_text(size=20))
+ggsave("Images/TWEBase.png")
+
+ggplot(df.1, aes(x=Longest.Wait, y=Total.Wait)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  labs(x = "Longest Wait", y = "Total Wait") + theme(legend.position = "none", text = element_text(size=20))
+ggsave("Images/LWTWSH.png")
+
+ggplot(df.1, aes(x=Longest.Wait, y=Efficiency)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  labs(x = "Longest Wait") + theme(legend.position = "none", text = element_text(size=20))
+ggsave("Images/LWESH.png")
+
+ggplot(df.1, aes(x=Total.Wait, y=Efficiency)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  labs(x = "Total Wait") + theme(legend.position = "none", text = element_text(size=20))
+ggsave("Images/TWESH.png")
 
 # linear best fit
-ggplot(data = df, aes(Standard.Deviation, Efficiency, fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) + geom_point(pch=21) + theme(text = element_text(size=20))
+ggplot(data = df, aes(x=Standard.Deviation, y=Efficiency, fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  geom_point(pch=21) + theme(text = element_text(size=20)) +   labs(x = "Standard Deviation", y = "Efficiency")
 ggsave("Images/lmEfficiency.png")
 # exponential best fit
-ggplot(data = df, aes(Standard.Deviation, log(Longest.Wait), fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) + geom_point(pch=21) + theme(text = element_text(size=20))
+ggplot(data = df, aes(x=Standard.Deviation, y=log(Longest.Wait), fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  geom_point(pch=21) + theme(text = element_text(size=20)) + labs(x = "Standard Deviation", y = "Longest Wait")
 ggsave("Images/LogLongestWait.png")
-ggplot(data = df, aes(Standard.Deviation, log(Total.Wait), fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) + geom_point(pch=21) + theme(text = element_text(size=20))
+ggplot(data = df, aes(x=Standard.Deviation, y=log(Total.Wait), fill=Model)) + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+  geom_point(pch=21) + theme(text = element_text(size=20)) + labs(x = "Standard Deviation", y = "Total Wait")
 ggsave("Images/LogTotalWait.png")

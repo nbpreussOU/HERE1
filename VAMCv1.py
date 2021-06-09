@@ -1,3 +1,5 @@
+import networkx as nx
+
 import VAMCv0
 
 
@@ -48,10 +50,52 @@ class HCNetworkV1(VAMCv0.HCNetworkV0):
         # create the edges
         super().build_network()
 
-        # add new edges from the topology
+        # add new edges from the topology and change necessary weights to account for patients removed from system
         self.G.add_edges_from([(4, 7)])
         self.G[4][7]['capacity'] = self.nPCPnEnd
         self.G[4][7]['weight'] = 0
+        self.G[2][4]['weight'] = VAMCv0.calc_max_single_wait_time(self.nNursenPCP-self.nPCPnEnd, self.pPCP)
+
+    def analyze_network(self):
+        """Analyzes the networks according to various metrics
+
+                Returns
+                ----------
+                list
+                    a list contianing the flow in, flow out, efficiency, the longest wait time, and the total wait time
+                """
+        # calculate maximum flow
+        flow_value, flow_dict = nx.maximum_flow(self.G, 0, 7)
+
+        # calculate maximum single person wait time
+        bottom_path = self.G[0][1]['weight'] + self.G[1][2]['weight'] + self.G[2][4]['weight'] + self.G[4][6][
+            'weight'] + self.G[6][7]['weight']
+        top_path = self.G[0][1]['weight'] + self.G[1][2]['weight'] + self.G[2][5]['weight'] + self.G[5][3]['weight'] + \
+                   self.G[3][6]['weight'] + self.G[6][7]['weight']
+        longest_wait = max(bottom_path, top_path)
+
+        # calculate efficiency
+        efficiency = flow_value / self.pStart * 100
+
+        # calculate total wait time
+        a = VAMCv0.calc_avg_wait_time(self.nStartnCheckIn, self.pCheckIn)
+        b = VAMCv0.calc_avg_wait_time(self.nCheckInnNurse, self.pNurse)
+        # people are sent straight home, so they don't count towards wait time ehehe
+        c = VAMCv0.calc_avg_wait_time(self.nNursenPCP - self.nPCPnEnd, self.pPCP)
+        d = VAMCv0.calc_avg_wait_time(self.nPCPnCheckOut + self.nPCPEvalnCheckOut, self.pCheckOut)
+        e = VAMCv0.calc_avg_wait_time(self.nNursenResident, self.pResident)
+        f = VAMCv0.calc_avg_wait_time(self.nResidentnPCPEval, self.pPCPEval)
+        total_wait = a + b + c + d + e + f
+
+        # round values to make them presentable
+        flow_value = round(flow_value, 3)
+        efficiency = round(efficiency, 3)
+        longest_wait = round(longest_wait, 3)
+        total_wait = round(total_wait)
+
+        return_vals = [self.pStart, flow_value, efficiency, longest_wait, total_wait]
+
+        return return_vals
 
     def get_data(self):
         """Returns the capacities of the edges of the graph
