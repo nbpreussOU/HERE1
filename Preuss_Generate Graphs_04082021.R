@@ -23,27 +23,27 @@ ggplot(df.1, aes(x=Efficiency, fill = ..x..)) + geom_histogram(binwidth = 1) + s
 ggsave("Images/EfficiencySH.png")
 
 # make correlation graphs
-ggplot(df.0, aes(x=Longest.Wait, y=Total.Wait, color="blue")) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+ggplot(df.0, aes(x=Longest.Wait, y=Total.Wait)) + geom_point() +
   labs(x = "Longest Wait", y = "Total Wait") + theme(legend.position = "none", text = element_text(size=20))
 ggsave("Images/LWTWBase.png")
 
-ggplot(df.0, aes(x=Longest.Wait, y=Efficiency)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+ggplot(df.0, aes(x=Longest.Wait, y=Efficiency)) + geom_point() +
   labs(x = "Longest Wait") + theme(legend.position = "none", text = element_text(size=20))
 ggsave("Images/LWEBase.png")
 
-ggplot(df.0, aes(x=Total.Wait, y=Efficiency)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+ggplot(df.0, aes(x=Total.Wait, y=Efficiency)) + geom_point() +
   labs(x = "Total Wait") + theme(legend.position = "none", text = element_text(size=20))
 ggsave("Images/TWEBase.png")
 
-ggplot(df.1, aes(x=Longest.Wait, y=Total.Wait)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+ggplot(df.1, aes(x=Longest.Wait, y=Total.Wait)) + geom_point() +
   labs(x = "Longest Wait", y = "Total Wait") + theme(legend.position = "none", text = element_text(size=20))
 ggsave("Images/LWTWSH.png")
 
-ggplot(df.1, aes(x=Longest.Wait, y=Efficiency)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+ggplot(df.1, aes(x=Longest.Wait, y=Efficiency)) + geom_point() +
   labs(x = "Longest Wait") + theme(legend.position = "none", text = element_text(size=20))
 ggsave("Images/LWESH.png")
 
-ggplot(df.1, aes(x=Total.Wait, y=Efficiency)) + geom_point() + stat_smooth(se = FALSE, method = 'loess', formula = y~x) +
+ggplot(df.1, aes(x=Total.Wait, y=Efficiency)) + geom_point() +
   labs(x = "Total Wait") + theme(legend.position = "none", text = element_text(size=20))
 ggsave("Images/TWESH.png")
 
